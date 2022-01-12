@@ -18,9 +18,10 @@ const app = async () => {
     for await (const sample of samples){
         const imgfile = `./samples/${sample}`
         const labels = await recoginition(imgfile)
-        console.log(...labels)
+        //console.log(...labels)
         const calorie = await calorieNinjas(labels)
-        console.log(calorie)
+        //console.log(calorie)
+        console.log(`Hasil deteksi: ${calorie.label} | Estimasi Kalori: ${calorie.calorie}`)
         result.push({
             'sample':sample,
             'label':calorie.label,
@@ -28,9 +29,10 @@ const app = async () => {
             'timestamp':moment().format('YYYY-MM-DD-HH-mm-ss-SSS')
         })
     }
-    console.log(result)
+    //console.log(result)
+    console.log('Menulis hasil deteksi pada ./output/results.csv')
     const csv = new ObjectsToCsv(result);
-    await csv.toDisk('./output/result.csv',{ append: true });
+    await csv.toDisk('./output/results.csv',{ append: true });
 }
 
 app()

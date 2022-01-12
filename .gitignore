@@ -1,6 +1,6 @@
 # User
-samples/
-output/
+samples/*
+output/*
 google-key.json
 app-linux
 app-macos
