@@ -1,27 +1,43 @@
 require('dotenv').config()
+const fs = require('fs')
+const moment = require('moment');
+const ObjectsToCsv = require('objects-to-csv');
 const recoginition = require('./modules/recognition')
 const calorieNinjas = require('./modules/calorieNinjas')
-// import calorieNinjas from './modules/calorieNinjas.js'
-// import dotenv from 'dotenv'
-// dotenv.config()
 
-// recoginition()
-//     .then((res)=>{
-//         console.log('Success')
-//         console.log(res)
-//         process.exit(1)
-//     })
-//     .catch((e)=>{
-//         console.log('===ERROR==='+e)
-//         process.exit(1)
-//     })
 const app = async () => {
-    const calorie = await calorieNinjas('egg')
-    console.log(calorie)
+    const samples = []
+    const result = []
+    const dir = await fs.promises.opendir('./samples')
+    for await (const dirent of dir){
+        samples.push(dirent.name)
+    }
+    samples.sort()
+    samples.slice(0,1)
+
+    for await (const sample of samples){
+        const imgfile = `./samples/${sample}`
+        const labels = await recoginition(imgfile)
+        console.log(...labels)
+        const calorie = await calorieNinjas(labels)
+        console.log(calorie)
+        result.push({
+            'sample':sample,
+            'label':calorie.label,
+            'calorie':calorie.calorie,
+            'timestamp':moment().format('YYYY-MM-DD-HH-mm-ss-SSS')
+        })
+    }
+    console.log(result)
+    const csv = new ObjectsToCsv(result);
+    await csv.toDisk('./output/result.csv',{ append: true });
 }
 
-try{
-    app()
-}catch(e){
-    console.log(`###ERROR MESSAGE###\n${e}`)
-}
+app()
+    .then(()=>{
+        console.log('Aplikasi Selesai')
+        process.exit(1)
+    })
+    .catch((e)=>{
+        console.log(`\n#######ERROR MESSAGE######\n${e}`)
+    })
