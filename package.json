@@ -2,8 +2,9 @@
   "name": "food-detection",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -11,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@google-cloud/vision": "^2.4.2",
+    "axios": "^0.24.0",
     "dotenv": "^10.0.0"
   }
 }
